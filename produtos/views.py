@@ -171,58 +171,51 @@ def cadastro_doador(request):
         return render(request, 'cadastrodoador.html', contexto)
 
 @login_required
-def visualizar_doador(request):# 1. Obter os parâmetros de pesquisa do JavaScript (via GET)
-    nome_param = request.GET.get('nome', '').strip().lower()
-    email_param = request.GET.get('email', '').strip().lower()
-    
-    # Inicializa o QuerySet com todos os doadores
-    doadores_query = Doador.objects.all().order_by('nome')
-    
-    # 2. Aplicar a lógica de filtro
-    if nome_param == 'todos':
-        # Se for 'todos', mostramos todos, a menos que o email limite
-        if email_param:
-            doadores_query = doadores_query.filter(email__icontains=email_param)
-            
-    elif nome_param and email_param:
-        # Nome E Email
-        doadores_query = doadores_query.filter(
-            Q(nome__icontains=nome_param) & Q(email__icontains=email_param)
-        )
-        
-    elif nome_param:
-        # Apenas Nome
-        doadores_query = doadores_query.filter(nome__icontains=nome_param)
-        
-    elif email_param:
-        # Apenas Email
-        doadores_query = doadores_query.filter(email__icontains=email_param)
-        
-    else:
-        # Nenhuma pesquisa válida (retorna erro ou lista vazia)
+def visualizar_doador(request):
+    # Pegar parâmetros sem .lower() — icontains já cuida do case
+    nome_param = request.GET.get('nome', '').strip()
+    email_param = request.GET.get('email', '').strip()
+
+    # Validação: nome é obrigatório (exceto se for "todos")
+    if not nome_param:
         return JsonResponse({
-            'sucesso': False, 
-            'mensagem_erro': 'Parâmetros de pesquisa não fornecidos.',
+            'sucesso': False,
+            'mensagem_erro': 'O campo "nome" é obrigatório.',
             'doadores': []
         })
 
-    # 3. Serialização: Converter os objetos Django em uma lista de dicionários Python
-    doadores_list = []
-    for doador in doadores_query:
-        doadores_list.append({
-            # Estes nomes (id, nome, email, telefone) devem ser os mesmos 
-            # que o seu JavaScript espera para montar a tabela!
-            'id': doador.id,
-            'nome': doador.nome,
-            'email': doador.email,
-            'telefone': doador.telefone if doador.telefone else 'N/A',
-        })
+    # Inicializa com todos
+    doadores_query = Doador.objects.all().order_by('nome')
 
-    # 4. Retornar a resposta JSON
+    # Lógica de filtro
+    if nome_param.lower() == 'todos':
+        if email_param:
+            doadores_query = doadores_query.filter(email__icontains=email_param)
+        # else: mostra todos
+    else:
+        # Filtros normais
+        filtros = Q()
+        if nome_param:
+            filtros &= Q(nome__icontains=nome_param)
+        if email_param:
+            filtros &= Q(email__icontains=email_param)
+        doadores_query = doadores_query.filter(filtros)
+
+    # Serialização
+    doadores_list = [
+        {
+            'id': d.id,
+            'nome': d.nome,
+            'email': d.email,
+            'telefone': d.telefone or 'N/A',
+        }
+        for d in doadores_query
+    ]
+
     return JsonResponse({
         'sucesso': True,
         'total': len(doadores_list),
-        'doadores': doadores_list # CHAVE ESPERADA PELO JAVASCRIPT
+        'doadores': doadores_list
     })
 
 @login_required
