@@ -2,12 +2,18 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import NovaPessoa
+from .models import NovaPessoa, Doador
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from datetime import date
+from django.shortcuts import render
+from django.http import JsonResponse # ESSENCIAL para retornar JSON
+from django.db.models import Q        # ESSENCIAL para pesquisas complexas
+from django.contrib.auth.decorators import login_required
+from .models import Doador            # Seus modelos de banco de dados
+# from .models import NovaPessoa      # Seus outros modelos
 
 def minha_pagina(request):
     return render(request, 'index.html')
@@ -118,6 +124,106 @@ def cadastro_crianca(request):
         else:
             messages.error(request, 'Ação inválida.') # Adiciona a mensagem de erro
             return redirect('cadastro_crianca') # Redireciona de volta para a página de cadastro
+
+@login_required # Mantendo o decorator para consistência
+def cadastro_doador(request):
+    if request.method == "GET":
+        # Usa o nome do template que você estava tentando usar antes: 'cadastro_doador.html'
+        return render(request, 'cadastrodoador.html', {}) 
+
+    elif request.method == "POST":
+        # Como não estamos usando Form, pegamos os dados diretamente
+        nome_doador = request.POST.get('nome')
+        email_doador = request.POST.get('email')
+        telefone_doador = request.POST.get('telefone')
+        
+        # --- Validação Manual Simples (Baseada no que foi sugerido antes) ---
+        erros = {}
+        if not nome_doador:
+            erros['nome'] = 'O nome é obrigatório.'
+        if not email_doador or '@' not in email_doador:
+            erros['email'] = 'O email é inválido ou obrigatório.'
+        
+        
+        if not erros:
+            try:
+                # Salvando no modelo Doador
+                Doador.objects.create(
+                    nome=nome_doador,
+                    email=email_doador,
+                    telefone=telefone_doador
+                )
+                messages.success(request, 'Doador cadastrado com sucesso.')
+                # Redireciona de volta para a página de cadastro
+                return redirect('cadastrodoador') 
+
+            except Exception as e:
+                # Captura erro de DB, como email duplicado
+                erros['geral'] = f'Erro ao salvar: {e}'
+
+        # Se houver erros, renderiza novamente com os dados preenchidos
+        contexto = {
+            'erros': erros,
+            'dados_preenchidos': request.POST, # Mantém os dados no formulário
+        }
+        
+        # Se houver erro ou GET, renderiza o template simples 'cadastro_doador.html'
+        return render(request, 'cadastrodoador.html', contexto)
+
+@login_required
+def visualizar_doador(request):# 1. Obter os parâmetros de pesquisa do JavaScript (via GET)
+    nome_param = request.GET.get('nome', '').strip().lower()
+    email_param = request.GET.get('email', '').strip().lower()
+    
+    # Inicializa o QuerySet com todos os doadores
+    doadores_query = Doador.objects.all().order_by('nome')
+    
+    # 2. Aplicar a lógica de filtro
+    if nome_param == 'todos':
+        # Se for 'todos', mostramos todos, a menos que o email limite
+        if email_param:
+            doadores_query = doadores_query.filter(email__icontains=email_param)
+            
+    elif nome_param and email_param:
+        # Nome E Email
+        doadores_query = doadores_query.filter(
+            Q(nome__icontains=nome_param) & Q(email__icontains=email_param)
+        )
+        
+    elif nome_param:
+        # Apenas Nome
+        doadores_query = doadores_query.filter(nome__icontains=nome_param)
+        
+    elif email_param:
+        # Apenas Email
+        doadores_query = doadores_query.filter(email__icontains=email_param)
+        
+    else:
+        # Nenhuma pesquisa válida (retorna erro ou lista vazia)
+        return JsonResponse({
+            'sucesso': False, 
+            'mensagem_erro': 'Parâmetros de pesquisa não fornecidos.',
+            'doadores': []
+        })
+
+    # 3. Serialização: Converter os objetos Django em uma lista de dicionários Python
+    doadores_list = []
+    for doador in doadores_query:
+        doadores_list.append({
+            # Estes nomes (id, nome, email, telefone) devem ser os mesmos 
+            # que o seu JavaScript espera para montar a tabela!
+            'id': doador.id,
+            'nome': doador.nome,
+            'email': doador.email,
+            'telefone': doador.telefone if doador.telefone else 'N/A',
+        })
+
+    # 4. Retornar a resposta JSON
+    return JsonResponse({
+        'sucesso': True,
+        'total': len(doadores_list),
+        'doadores': doadores_list # CHAVE ESPERADA PELO JAVASCRIPT
+    })
 
 @login_required
 def atualizar_crianca(request):

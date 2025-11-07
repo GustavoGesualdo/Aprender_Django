@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head> 
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro</title>
+    <link rel="icon" href="{% static 'Index/img/Logo girassol.png' %}" type="image/png" />
+    <link rel="stylesheet" href="{% static 'Cadastro/css/css.css' %}" />
+</head>
+
+<body>
+    <nav>
+        <div>
+            <a href="{% url 'minha_pagina' %}">Home</a>
+            <a href="{% url 'contato_projeto' %}">Contato</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'cadastro_crianca' %}">Cadastrar</a>
+            <a href="{% url 'pesquisa_crianca' %}">Pesquisar</a>
+            {% endif %}
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </nav>
+
+    <section>
+        <h1>Cadastrar Doador</h1>
+
+        {% if messages %}
+        {% for message in messages %}
+        {% if 'success' in message.tags %}
+        <label class="success">{{ message }}</label>
+        {% else %}
+        {% if 'error' in message.tags %}
+        <label class="error">{{ message }}</label>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+
+        <form action="{% url 'cadastro_doador' %}" method="POST">
+            {% csrf_token %}
+
+            <!-- Nome e Data de Nascimento lado a lado -->
+            <div class="form-row">
+                <label for="nome">Nome:</label>
+                <div>
+                    <input type="text" name="nome" id="nome" placeholder="Digite seu nome" required />
+                </div>
+            </div>
+            <!-- Nome e Data de Nascimento lado a lado -->
+            <div class="form-row">
+                <label for="nome">E-mail:</label>
+                <div>
+                    <input type="text" name="email" id="email" placeholder="Digite seu E-mail" required />
+                </div>
+            </div>
+            <!-- Nome do Responsável e Telefone lado a lado -->
+            <div class="form-row">
+                <label for="nome">Telefone:</label>
+                <div>
+                    <input type="text" name="telefone" placeholder="Telefone" required />
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" name="acao" value="criar">Criar</button>
+            </div>
+        </form>
+    </section>
+
+    <footer>
+        <p>
+            Este projeto é dedicado a todos que acreditam que mudanças podem ser
+            poderosas e transformadoras.
+        </p>
+    </footer>
+</body>
+
+</html>

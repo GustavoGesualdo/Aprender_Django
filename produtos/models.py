@@ -30,3 +30,12 @@ class NovaPessoa(models.Model):
         if today.month < self.data_nascimento.month or (today.month == self.data_nascimento.month and today.day < self.data_nascimento.day):
             idade -= 1
         return idade
+    
+class Doador(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=15, blank=True, null=True)
+    # Adicione outros campos necessários, como CPF, tipo sanguíneo, etc.
+
+    def __str__(self):
+        return self.nome

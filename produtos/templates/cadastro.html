@@ -94,6 +94,17 @@
           <button type="submit" name="acao" value="criar">Criar</button>
         </div>
       </form>
+      {# NOVO BLOCO: Texto redirecionando para o cadastro de doadores #}
+      {% if user.is_authenticated %}
+      <div style="text-align: center; margin-top: 20px;">
+        <p>
+          Quer ajudar? 
+          <a href="{% url 'cadastro_doador' %}" style="color: #4CAF50; text-decoration: underline;">
+            Cadastre-se como Doador aqui!
+          </a>
+        </p>
+      </div>
+      {% endif %}
     </section>
 
     <footer>

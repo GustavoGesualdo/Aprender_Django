@@ -1,0 +1,175 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pesquisar Doador</title>     <link
+      rel="icon"
+      href="{% static 'Index/img/Logo girassol.png' %}"
+      type="image/png"
+    />
+    <link rel="stylesheet" href="{% static 'Pesquisar/css/css.css' %}" />
+  </head>
+  <body>
+    <nav>
+      <div>
+        <a href="{% url 'minha_pagina' %}">Home</a>
+        <a href="{% url 'contato_projeto' %}">Contato</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'cadastro_crianca' %}">Cadastrar</a>
+        <a href="{% url 'pesquisa_crianca' %}">Pesquisar</a>
+        {# Adicionei o link de pesquisa de doador #}
+        <a href="{% url 'pesquisa_doador' %}">Pesquisar Doador</a> 
+        {% endif %}
+      </div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}">Logout</a>
+      {% else %}
+      <a href="{% url 'login' %}">Login</a>
+      {% endif %}
+    </nav>
+
+    <div class="container">
+      <h1>Pesquisa de Doadores</h1>       <form
+        id="pesquisaForm"
+        method="GET"
+        action="{% url 'visualizar_doador' %}"
+      >
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Nome do Doador (Obrigatório):</label>
+            <input type="text" id="nome" name="nome" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email (Opcional):</label>
+            <input type="text" id="email" name="email" />
+          </div>
+        </div>
+        <p style="margin-top: 10px; font-style: italic; color: #555">
+          Para ver todos os doadores, digite <strong>"todos"</strong> no campo
+          "Nome do Doador".
+        </p>
+        <button type="submit">Pesquisar</button>
+      </form>
+      <div class="container">
+    {# CONTAINER ONDE O JS INSERIRÁ A TABELA OU MENSAGENS #}
+    <div id="resultados-doador-container">
+
+        {% if resultados %}
+        <h2>Resultados da Pesquisa</h2>
+        <div style="display: flex; justify-content: space-between">
+            <p><strong>Total de doadores encontrados:</strong> {{ resultados|length }}</p>
+        </div>
+        
+        <table class="resultados-tabela">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>E-mail</th>
+                </tr>
+            </thead>
+            {# ADICIONE O ID AQUI! #}
+            <tbody id="tabela-doadores-body"> 
+                {% for doador in resultados %}
+                <tr
+                    onclick="window.location='/produtos/cadastro_doador/?id={{ doador.id }}';"
+                    style="cursor: pointer"
+                >
+                    <td>{{ doador.nome }}</td>
+                    <td>{{ doador.telefone }}</td>
+                    <td>{{ doador.email }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">
+                        Nenhum resultado encontrado para a sua pesquisa.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+    </div>
+    </div>
+    <footer>
+      <p>
+        Este projeto é dedicado a todos que acreditam que mudanças podem ser poderosas e transformadoras.
+      </p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('pesquisaForm');
+            // NOVO: Seleciona o container para as mensagens
+            const msgContainer = document.getElementById('resultados-doador-container');
+            // NOVO: ID que você adicionou no seu HTML
+            const tabelaBody = document.getElementById('tabela-doadores-body'); 
+            
+            // ... (restante das variáveis) ...
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); 
+                
+                // ... (Coleta de dados e montagem da URL Completa) ...
+
+                // Limpa o corpo da tabela e exibe loading
+                if (tabelaBody) {
+                    tabelaBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Buscando doadores...</td></tr>';
+                }
+                msgContainer.querySelector('h2').remove(); // Opcional: remover o título de resultados antigos
+                
+                // ... (Fetch e .then(response => response.json()) ) ...
+
+                .then(data => {
+                    // Limpa resultados existentes no container principal
+                    msgContainer.innerHTML = ''; 
+
+                    if (data.sucesso && data.doadores) {
+                        if (data.doadores.length > 0) {
+                            // Chama a função para reconstruir o corpo da tabela
+                            exibirResultadosDoador(data.doadores); 
+                        } else {
+                            // Se não houver resultados, exibe a mensagem de erro no container principal.
+                            msgContainer.innerHTML = '<p style="text-align: center; color: orange;">Nenhum doador encontrado com os critérios fornecidos.</p>';
+                        }
+                    } else {
+                        msgContainer.innerHTML = `<p style="text-align: center; color: red;">${data.mensagem_erro || 'Erro ao carregar dados.'}</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro AJAX:', error);
+                    msgContainer.innerHTML = '<p style="text-align: center; color: red;">Ocorreu um erro de comunicação. Tente novamente.</p>';
+                });
+            });
+
+            // Função para montar e exibir SOMENTE as linhas da tabela
+            function exibirResultadosDoador(doadores) {
+                let linhasHTML = '';
+                
+                doadores.forEach(doador => {
+                    // Monta cada linha
+                    linhasHTML += `
+                        <tr onclick="window.location='/produtos/cadastro_doador/?id=${doador.id}';" style="cursor: pointer">
+                            <td>${doador.nome}</td>
+                            <td>${doador.telefone || 'N/A'}</td>
+                            <td>${doador.email}</td>
+                        </tr>
+                    `;
+                });
+                
+                // ATUALIZA APENAS O CORPO DA TABELA
+                tabelaBody.innerHTML = linhasHTML; 
+
+                // Atualiza o contador de resultados no container principal
+                // Você precisará garantir que esta estrutura exista no HTML
+                // O código abaixo é apenas um exemplo de como atualizar as informações de contador.
+                // containerResultados.querySelector('p:first-child strong').textContent = doadores.length; 
+            }
+        });
+    </script>
+  </body>
+</html>
