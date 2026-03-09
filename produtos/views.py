@@ -1,29 +1,32 @@
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from .models import NovaPessoa, Doador
 from django import forms
+from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from datetime import date
+from django.db.models import Q  # ESSENCIAL para pesquisas complexas
+from django.http import HttpResponse
+from django.http import JsonResponse  # ESSENCIAL para retornar JSON
+from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render
-from django.http import JsonResponse # ESSENCIAL para retornar JSON
-from django.db.models import Q        # ESSENCIAL para pesquisas complexas
-from django.contrib.auth.decorators import login_required
-from .models import Doador            # Seus modelos de banco de dados
+from django.urls import reverse
+from .models import Doador  # Seus modelos de banco de dados
+from .models import NovaPessoa
+
+
 # from .models import NovaPessoa      # Seus outros modelos
 
 def minha_pagina(request):
     return render(request, 'index.html')
 
+
 def contato_projeto(request):
     return render(request, 'contato.html')
+
 
 def logout(request):
     auth_logout(request)  # Encerra a sessão do usuário
     return redirect('/')  # Redireciona para a página inicial (ou outra página desejada)
+
 
 def login(request):
     if request.method == 'POST':
@@ -38,7 +41,7 @@ def login(request):
             # Se o usuário for autenticado com sucesso, faz o login
             auth_login(request, user)
             # Redireciona para a página inicial (ajuste a URL conforme necessário)
-            return redirect('/') # Ou para outra URL como 'home'
+            return redirect('/')  # Ou para outra URL como 'home'
         else:
             # Se a autenticação falhar, exibe uma mensagem de erro (opcional)
             messages.error(request, 'Usuário ou senha inválidos.')
@@ -47,7 +50,8 @@ def login(request):
     else:
         # Se a requisição for GET, apenas renderiza a página de login
         return render(request, 'login.html')
-  
+
+
 class ResetSenhaForm(forms.Form):
     username = forms.CharField(max_length=150, label='Nome de Usuário')
     new_password = forms.CharField(widget=forms.PasswordInput, label='Nova Senha')
@@ -74,6 +78,7 @@ class ResetSenhaForm(forms.Form):
             self.add_error('username', 'Usuário não encontrado.')
             return False
 
+
 def resetar_senha(request):
     if request.method == 'POST':
         form = ResetSenhaForm(request.POST)
@@ -86,6 +91,7 @@ def resetar_senha(request):
     else:
         form = ResetSenhaForm()
     return render(request, 'reset_senha.html', {'form': form})
+
 
 @login_required
 def cadastro_crianca(request):
@@ -107,6 +113,8 @@ def cadastro_crianca(request):
             bairro = request.POST.get('bairro')
             responsavel = request.POST.get('responsavel')
             telefone = request.POST.get('telefone')
+            latitude = request.POST.get('latitude') or None
+            longitude = request.POST.get('longitude') or None
 
             pessoa = NovaPessoa(
                 nome=nome,
@@ -115,36 +123,38 @@ def cadastro_crianca(request):
                 numero=numero,
                 bairro=bairro,
                 nome_responsavel=responsavel,
-                telefone=telefone
+                telefone=telefone,
+                latitude=latitude,
+                longitude=longitude
             )
             pessoa.save()
             messages.success(request, 'Criança cadastrada com sucesso.')
-            return redirect('cadastro_crianca') # Redireciona de volta para a página de cadastro
+            return redirect('cadastro_crianca')  # Redireciona de volta para a página de cadastro
 
         else:
-            messages.error(request, 'Ação inválida.') # Adiciona a mensagem de erro
-            return redirect('cadastro_crianca') # Redireciona de volta para a página de cadastro
+            messages.error(request, 'Ação inválida.')  # Adiciona a mensagem de erro
+            return redirect('cadastro_crianca')  # Redireciona de volta para a página de cadastro
 
-@login_required # Mantendo o decorator para consistência
+
+@login_required  # Mantendo o decorator para consistência
 def cadastro_doador(request):
     if request.method == "GET":
         # Usa o nome do template que você estava tentando usar antes: 'cadastro_doador.html'
-        return render(request, 'cadastrodoador.html', {}) 
+        return render(request, 'cadastrodoador.html', {})
 
     elif request.method == "POST":
         # Como não estamos usando Form, pegamos os dados diretamente
         nome_doador = request.POST.get('nome')
         email_doador = request.POST.get('email')
         telefone_doador = request.POST.get('telefone')
-        
+
         # --- Validação Manual Simples (Baseada no que foi sugerido antes) ---
         erros = {}
         if not nome_doador:
             erros['nome'] = 'O nome é obrigatório.'
         if not email_doador or '@' not in email_doador:
             erros['email'] = 'O email é inválido ou obrigatório.'
-        
-        
+
         if not erros:
             try:
                 # Salvando no modelo Doador
@@ -155,7 +165,7 @@ def cadastro_doador(request):
                 )
                 messages.success(request, 'Doador cadastrado com sucesso.')
                 # Redireciona de volta para a página de cadastro
-                return redirect('cadastrodoador') 
+                return redirect('cadastro_doador')
 
             except Exception as e:
                 # Captura erro de DB, como email duplicado
@@ -164,11 +174,12 @@ def cadastro_doador(request):
         # Se houver erros, renderiza novamente com os dados preenchidos
         contexto = {
             'erros': erros,
-            'dados_preenchidos': request.POST, # Mantém os dados no formulário
+            'dados_preenchidos': request.POST,  # Mantém os dados no formulário
         }
-        
+
         # Se houver erro ou GET, renderiza o template simples 'cadastro_doador.html'
         return render(request, 'cadastrodoador.html', contexto)
+
 
 @login_required
 def visualizar_doador(request):
@@ -218,6 +229,7 @@ def visualizar_doador(request):
         'doadores': doadores_list
     })
 
+
 @login_required
 def atualizar_crianca(request):
     if request.method == "GET":
@@ -237,10 +249,10 @@ def atualizar_crianca(request):
                     crianca = NovaPessoa.objects.get(id=crianca_id_deletar)
                     crianca.delete()
                     messages.success(request, 'Apagado cadastrado da Criança com sucesso.')
-                    return redirect('atualizar_crianca') # Redireciona de volta para a página de cadastro
+                    return redirect('atualizar_crianca')  # Redireciona de volta para a página de cadastro
                 except NovaPessoa.DoesNotExist:
                     messages.error(request, 'Criança não encontrada para apagar.')
-                    return redirect('atualizar_crianca') # Redireciona de volta para a página de cadastro
+                    return redirect('atualizar_crianca')  # Redireciona de volta para a página de cadastro
             else:
                 return HttpResponse("ID da criança para deletar não fornecido.")
 
@@ -256,22 +268,22 @@ def atualizar_crianca(request):
                     crianca.bairro = request.POST.get('bairro')
                     crianca.nome_responsavel = request.POST.get('responsavel')
                     crianca.telefone = request.POST.get('telefone')
+                    crianca.latitude = request.POST.get('latitude') or None
+                    crianca.longitude = request.POST.get('longitude') or None
                     crianca.save()
                     messages.success(request, 'Atualizado cadastrado da Criança com sucesso.')
-                    crianca_id = request.GET.get('id')
-                    crianca = None
-                    if crianca_id:
-                        crianca = get_object_or_404(NovaPessoa, id=crianca_id)
-                    return render(request, 'atualizar.html', {'crianca': crianca})
+                    url = reverse('atualizar_crianca')
+                    return redirect(f'{url}?id={crianca.id}')
                 except NovaPessoa.DoesNotExist:
                     messages.error(request, 'Criança não encontrada para editar.')
-                    return render(request, 'atualizar.html', {'crianca': crianca})
+                    return redirect('atualizar_crianca')
             else:
                 return HttpResponse("ID da criança para editar não fornecido.")
 
         else:
             return HttpResponse("Ação inválida.")
-        
+
+
 @login_required
 def pesquisa_crianca(request):
     nome_param = request.GET.get('nome', '').strip().lower()
@@ -308,9 +320,9 @@ def pesquisa_crianca(request):
         return render(request, 'pesquisa.html', {'mensagem_erro': mensagem_erro})
 
     maiores_18 = sum([crianca.idade >= 18 for crianca in resultados])
-    
+
     context = {
-    'resultados': resultados,
-    'maiores_18': maiores_18,
+        'resultados': resultados,
+        'maiores_18': maiores_18,
     }
     return render(request, 'pesquisa.html', context)
