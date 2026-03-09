@@ -1,4 +1,4 @@
-{% load static %}
+{% load static l10n %}
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -12,6 +12,51 @@
       type="image/png"
     />
     <link rel="stylesheet" href="{% static 'Cadastro/css/css.css' %}" />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <style>
+      #map {
+        width: 100%;
+        height: 400px;
+        margin-top: 20px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        overflow: hidden;
+      }
+
+      .coords-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .coords-row input {
+        flex: 1;
+        min-width: 220px;
+      }
+
+      .map-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .map-actions button {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
     <nav>
@@ -45,7 +90,6 @@
         {% endfor %}
       {% endif %}
 
-
       <form action="{% url 'cadastro_crianca' %}" method="POST">
         {% csrf_token %}
 
@@ -74,9 +118,9 @@
 
         <!-- Rua, Número e Bairro lado a lado -->
         <div class="form-row">
-          <input type="text" name="rua" placeholder="Rua" required />
-          <input type="number" name="numero" placeholder="Número" required />
-          <input type="text" name="bairro" placeholder="Bairro" required />
+          <input type="text" id="rua" name="rua" placeholder="Rua" required />
+          <input type="number" id="numero" name="numero" placeholder="Número" required />
+          <input type="text" id="bairro" name="bairro" placeholder="Bairro" required />
         </div>
 
         <!-- Nome do Responsável e Telefone lado a lado -->
@@ -90,15 +134,42 @@
           <input type="text" name="telefone" placeholder="Telefone" required />
         </div>
 
-        <div class="button-group">
+        <!-- Latitude e Longitude -->
+        <div class="coords-row">
+          <input
+            type="text"
+            id="latitude"
+            name="latitude"
+            placeholder="Latitude"
+            value="{{ crianca.latitude|unlocalize|default:'' }}"
+            readonly
+          />
+          <input
+            type="text"
+            id="longitude"
+            name="longitude"
+            placeholder="Longitude"
+            value="{{ crianca.longitude|unlocalize|default:'' }}"
+            readonly
+          />
+        </div>
+
+        <div class="map-actions">
+          <button type="button" onclick="buscarEndereco()">Buscar endereço no mapa</button>
+          <button type="button" onclick="usarMinhaLocalizacao()">Usar minha localização</button>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="button-group" style="margin-top: 20px;">
           <button type="submit" name="acao" value="criar">Criar</button>
         </div>
       </form>
-      {# NOVO BLOCO: Texto redirecionando para o cadastro de doadores #}
+
       {% if user.is_authenticated %}
       <div style="text-align: center; margin-top: 20px;">
         <p>
-          Quer ajudar? 
+          Quer ajudar?
           <a href="{% url 'cadastro_doador' %}" style="color: #4CAF50; text-decoration: underline;">
             Cadastre-se como Doador aqui!
           </a>
@@ -113,5 +184,112 @@
         poderosas e transformadoras.
       </p>
     </footer>
+
+    <!-- Leaflet JS -->
+    <!-- Opção pelo uso da api do Leaflet porque disponibiliza mapa
+    sem precisar de uma KEY para renderizar o mapa em tela-->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script>
+      let map;
+      let marker;
+
+      function initMap() {
+        const latRaw = (document.getElementById('latitude').value || '').replace(',', '.');
+        const lngRaw = (document.getElementById('longitude').value || '').replace(',', '.');
+
+        const latValue = parseFloat(latRaw);
+        const lngValue = parseFloat(lngRaw);
+
+        const lat = !isNaN(latValue) ? latValue : -23.6639;
+        const lng = !isNaN(lngValue) ? lngValue : -46.5383;
+
+        map = L.map('map').setView([lat, lng], 15);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+        atualizarCampos(lat, lng);
+
+        marker.on('dragend', function (event) {
+          const pos = event.target.getLatLng();
+          atualizarCampos(pos.lat, pos.lng);
+        });
+
+        map.on('click', function (event) {
+          const { lat, lng } = event.latlng;
+          marker.setLatLng([lat, lng]);
+          atualizarCampos(lat, lng);
+        });
+
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 200);
+      }
+
+      function atualizarCampos(lat, lng) {
+        document.getElementById('latitude').value = Number(lat).toFixed(6);
+        document.getElementById('longitude').value = Number(lng).toFixed(6);
+      }
+
+      async function buscarEndereco() {
+        const rua = document.getElementById('rua').value.trim();
+        const numero = document.getElementById('numero').value.trim();
+        const bairro = document.getElementById('bairro').value.trim();
+
+        const endereco = `${rua}, ${numero}, ${bairro}, Brasil`;
+
+        try {
+          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+
+            map.setView([lat, lng], 17);
+            marker.setLatLng([lat, lng]);
+            atualizarCampos(lat, lng);
+          } else {
+            alert('Endereço não encontrado.');
+          }
+        } catch (error) {
+          alert('Erro ao buscar o endereço no mapa.');
+          console.error(error);
+        }
+      }
+
+      function usarMinhaLocalizacao() {
+        if (!navigator.geolocation) {
+          alert('Seu navegador não suporta geolocalização.');
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            map.setView([lat, lng], 17);
+            marker.setLatLng([lat, lng]);
+            atualizarCampos(lat, lng);
+          },
+          function () {
+            alert('Não foi possível obter sua localização atual.');
+          }
+        );
+      }
+
+      document.addEventListener('DOMContentLoaded', initMap);
+    </script>
   </body>
 </html>

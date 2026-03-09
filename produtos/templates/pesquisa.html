@@ -1,4 +1,4 @@
-{% load static %}
+{% load static l10n %}
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -48,50 +48,70 @@
             <input type="text" id="nome_responsavel" name="nome_responsavel" />
           </div>
         </div>
+
         <p style="margin-top: 10px; font-style: italic; color: #555">
           Para ver todas as crianças, digite <strong>"todos"</strong> no campo
           "Nome da Criança".
         </p>
+
         <button type="submit">Pesquisar</button>
       </form>
 
       {% if resultados %}
       <h2>Resultados da Pesquisa</h2>
+
       <div style="display: flex; justify-content: space-between">
         <p><strong>Total de crianças encontradas:</strong> {{ resultados|length }}</p>
         <p><strong>Maiores de 18 anos:</strong> {{ maiores_18 }}</p>
       </div>
+
       <table class="resultados-tabela">
         <thead>
           <tr>
             <th>Nome</th>
-            <th>Data de Nascimento</th>
+            <th>Data de Nasc.</th>
             <th>Idade</th>
             <th>Rua</th>
-            <th>Número</th>
+            <th>Nº</th>
             <th>Bairro</th>
-            <th>Responsável</th>
-            <th>Telefone</th>
+            <th>Resp.</th>
+            <th>Tel.</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
           </tr>
         </thead>
         <tbody>
           {% for crianca in resultados %}
           <tr
-            onclick="window.location='/produtos/atualizar_crianca/?id={{ crianca.id }}';"
+            onclick="window.location='{% url 'atualizar_crianca' %}?id={{ crianca.id }}';"
             style="cursor: pointer"
           >
             <td>{{ crianca.nome }}</td>
-            <td>{{ crianca.data_nascimento|date:"d/m/Y" }}</td>
+            <td>{{ crianca.data_nascimento|date:'d/m/Y' }}</td>
             <td>{{ crianca.idade }} anos</td>
             <td>{{ crianca.rua }}</td>
             <td>{{ crianca.numero }}</td>
             <td>{{ crianca.bairro }}</td>
             <td>{{ crianca.nome_responsavel }}</td>
             <td>{{ crianca.telefone }}</td>
+            <td>
+              {% if crianca.latitude %}
+                {{ crianca.latitude|unlocalize }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>
+              {% if crianca.longitude %}
+                {{ crianca.longitude|unlocalize }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="7">
+            <td colspan="10">
               Nenhum resultado encontrado para a sua pesquisa.
             </td>
           </tr>
@@ -100,6 +120,7 @@
       </table>
       {% endif %}
     </div>
+
     <footer>
       <p>
         Este projeto é dedicado a todos que acreditam que mudanças podem ser poderosas e transformadoras.
