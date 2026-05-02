@@ -148,3 +148,8 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://aprender-django.vercel.app',
+    'https://*.vercel.app'
+]
