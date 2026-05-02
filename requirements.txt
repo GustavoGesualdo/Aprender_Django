@@ -31,7 +31,6 @@ pandas==1.4.3
 Pillow==9.2.0
 platformdirs==2.5.2
 PyAutoGUI==0.9.53
-pybrowsers==0.4.1; sys_platform == 'win32'
 pycodestyle==2.8.0
 pycparser==2.21
 PyGetWindow==0.0.9
