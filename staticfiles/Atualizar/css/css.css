@@ -1,0 +1,210 @@
+/* Arquivo: Cadastro/static/Cadastro/css/css.css */
+
+/* Estilos gerais do corpo (base) */
+body {
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #F5E8D3; /* areia clara */
+  color: #3B2F2F; /* marrom escuro acinzentado */
+  line-height: 1.6;
+}
+
+main {
+  flex: 1;
+}
+
+/* Menu de navegação fixo no topo (base) */
+nav {
+    background-color: #8B6D3B; /* marrom quente, terroso */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(139, 109, 59, 0.3); /* sombra marrom suave */
+}
+
+nav div {
+    display: flex;
+    align-items: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 0 15px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+nav a:hover {
+    background-color: #C5A25C; /* amarelo mostarda */
+    color: #3B4F2B; /* verde escuro para contraste */
+    transform: translateY(-2px);
+}
+
+/* Estilos para a seção principal (ajustes para o formulário de cadastro) */
+section {
+    max-width: 700px; /* Reduz a largura máxima para o formulário */
+    margin: 120px auto; /* Espaço para o menu fixo e centralização */
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(139, 109, 59, 0.1); /* sombra marrom clara */
+}
+
+section h1 {
+    font-size: 2.2em;
+    color: #8B6D3B; /* marrom */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.success {
+    color: #3B7A00; /* verde vibrante */
+    display: block;
+    margin-top: 10px;
+}
+
+.error {
+    color: #b33a3a; /* vermelho escuro */
+    display: block;
+    margin-top: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.form-row > div {
+    flex: 1; /* Distribuir espaço igualmente entre os elementos filhos */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-size: 1em;
+    color: #555555; /* cinza médio */
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+    padding: 12px;
+    font-size: 1em;
+    margin-top: 5px;
+    border: 1px solid #c4b69b; /* marrom claro */
+    border-radius: 4px;
+    width: calc(100% - 24px); /* Considerar o padding e a borda */
+    box-sizing: border-box;
+    background-color: #faf5e6; /* bege claro, suave */
+    color: #4b3b1b; /* marrom escuro */
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-group button[value="editar"] {
+    background-color: #4CAF50; /* verde */
+}
+
+.button-group button[value="deletar"] {
+    background-color: #b33a3a; /* vermelho escuro */
+}
+
+.button-group button[value="pesquisar"] {
+    background-color: #C5A25C; /* amarelo mostarda */
+    color: #3B4F2B; /* verde escuro */
+}
+
+.button-group button:hover {
+    opacity: 0.9;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #EDE0CE; /* bege acinzentado */
+  color: #776B5D;
+  margin-top: 30px;
+  border-top: 1px solid #DDC9AA;
+}
+
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    section {
+        margin-top: 100px;
+        padding: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-row > div {
+        width: 100%;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group button {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 600px) {
+    section h1 {
+        font-size: 1.8em;
+    }
+
+    label {
+        font-size: 0.9em;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    .button-group button {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+}

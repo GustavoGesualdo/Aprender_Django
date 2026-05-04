@@ -1,0 +1,107 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #F5E8D3; /* bege claro */
+  color: #3B2F2F;            /* marrom escuro acinzentado */
+  line-height: 1.6;
+}
+
+nav {
+  background-color: #8B6D3B; /* marrom médio */
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(92, 68, 34, 0.1);
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  margin: 0 15px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+nav a:hover {
+  background-color: #5C4422; /* marrom escuro */
+  transform: translateY(-2px);
+}
+
+header {
+  background-color: #E8D8C3; /* bege amarelado */
+  padding: 80px 30px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+header h1 {
+  font-size: 3em;
+  color: #8B6D3B; /* marrom médio */
+  margin-bottom: 10px;
+}
+
+section {
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(92, 68, 34, 0.1);
+}
+
+section h2 {
+  color: #8B6D3B; /* marrom médio */
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+form input,
+form textarea {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #C5A25C; /* mostarda suave */
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+form button {
+  margin-top: 20px;
+  background-color: #8B6D3B; /* marrom médio */
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #5C4422; /* marrom escuro */
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #EDE0CE; /* bege acinzentado */
+  color: #776B5D;
+  margin-top: 30px;
+  border-top: 1px solid #DDC9AA;
+}

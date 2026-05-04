@@ -1,0 +1,180 @@
+/* Estilos gerais do corpo (base) */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F5E8D3; /* bege claro */
+    color: #3B2F2F; /* marrom escuro acinzentado */
+    line-height: 1.6;
+}
+
+/* Menu de navegação fixo no topo (base) */
+nav {
+    background-color: #8B6D3B; /* marrom médio */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(92, 68, 34, 0.1); /* sombra marrom suave */
+}
+
+nav div {
+    display: flex;
+    align-items: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 0 15px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+nav a:hover {
+    background-color: #5C4422; /* marrom escuro */
+    transform: translateY(-2px);
+}
+
+/* Estilos para a seção principal (ajustes para o formulário de pesquisa) */
+.container {
+    max-width: 960px;
+    margin: 120px auto 20px auto;
+    padding: 30px;
+    background-color: #FAF7F2; /* tom claro neutro puxado pro areia */
+    border: 1px solid #ddcdb6;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(92, 68, 34, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+    color: #5C4422; /* marrom escuro */
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row > div {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #776B5D; /* cinza quente */
+    font-size: 1em;
+}
+
+input[type="text"] {
+    width: calc(100% - 12px);
+    padding: 12px;
+    border: 1px solid #C5A25C; /* mostarda suave */
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+    margin-top: 5px;
+    background-color: #FFFDF9;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50; /* verde oliva */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 12px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+button[type="submit"]:hover {
+    background-color: #3E8E41; /* verde oliva mais escuro para hover */
+    opacity: 0.9;
+}
+
+
+.resultados-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.resultados-tabela th,
+.resultados-tabela td {
+    border: 1px solid #ddcdb6;
+    padding: 8px;
+    text-align: left;
+}
+
+.resultados-tabela th {
+    background-color: #EFE5D1; /* areia clara */
+    font-weight: bold;
+}
+
+.resultados-tabela tbody tr:nth-child(even) {
+    background-color: #FAF7F2;
+}
+
+.resultados-tabela tbody tr:hover {
+    background-color: #E6D7B8; /* hover mais suave e quente */
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #EDE0CE; /* bege acinzentado */
+  color: #776B5D;
+  margin-top: 30px;
+  border-top: 1px solid #DDC9AA;
+}
+
+/* Responsividade para telas menores (base) */
+@media (max-width: 768px) {
+    .container {
+        margin-top: 100px;
+        padding: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-row > div {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    h1, h2 {
+        font-size: 1.8em;
+    }
+
+    label {
+        font-size: 0.9em;
+    }
+
+    input[type="text"],
+    button[type="submit"] {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+}

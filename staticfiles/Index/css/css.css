@@ -1,0 +1,185 @@
+/* Estilos gerais do corpo */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #F5E8D3; /* areia clara */
+  color: #3B2F2F; /* marrom escuro acinzentado */
+  line-height: 1.6;
+}
+
+/* Menu de navegação fixo no topo */
+nav {
+  background-color: #8B6D3B;  /* marrom quente, terroso */
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(139, 109, 59, 0.5); /* sombra marrom suave */
+}
+
+nav div {
+  display: flex;
+  align-items: center;
+}
+
+nav a {
+  color: #ffffff; /* branco */
+  text-decoration: none;
+  font-size: 18px;
+  margin: 0 15px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+nav a:hover {
+  background-color: #C5A25C; /* amarelo mostarda */
+  color: #3B4F2B; /* verde escuro para contraste */
+  transform: translateY(-2px);
+}
+
+/* Estilos para o conteúdo da página */
+section {
+  max-width: 900px;
+  margin: 120px auto 30px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(139, 109, 59, 0.15); /* sombra marrom clara suave */
+}
+
+/* Título principal */
+section h1 {
+  font-size: 3em;
+  text-align: center;
+  color: #8B6D3B; /* marrom (mesmo tom do menu) */
+  margin-bottom: 10px;
+}
+
+/* Subtítulo */
+section h2 {
+  font-size: 1.6em;
+  text-align: center;
+  color: #555555;  /* cinza médio */
+  font-weight: normal;
+  font-style: italic;
+  margin-bottom: 30px;
+}
+
+/* Citação destacada */
+blockquote {
+  border-left: 5px solid #8B6D3B;
+  background-color: #faf5e6;  /* bege claro, suave */
+  padding: 15px 25px;
+  margin: 30px 0;
+  font-style: italic;
+  font-size: 1.1em;
+  color: #4b3b1b;  /* marrom escuro */
+  box-shadow: 0 4px 10px rgba(139, 109, 59, 0.1);
+  border-radius: 8px;
+}
+
+/* Títulos das seções */
+section h3 {
+  font-size: 1.8em;
+  color: #8B6D3B;
+  border-bottom: 2px solid #c4b69b; /* marrom claro */
+  padding-bottom: 10px;
+  margin-top: 40px;
+}
+
+/* Parágrafos */
+section p {
+  font-size: 1.1em;
+  color: #555555; /* cinza médio */
+  margin-bottom: 15px;
+}
+
+/* Itens em destaque */
+section strong {
+  font-weight: bold;
+  color: #333333;
+}
+
+/* Listas */
+section ul {
+  list-style: disc inside;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+section ul li {
+  margin-bottom: 8px;
+  color: #555555; /* cinza médio */
+}
+
+/* Linha divisória */
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #c4b69b; /* marrom claro */
+  margin: 40px 0;
+}
+
+/* Rodapé opcional */
+footer {
+  background-color: #faf5e6; /* bege claro */
+  padding: 20px 30px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #555555; /* cinza médio */
+  border-top: 1px solid #c4b69b;
+  margin-top: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav div {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  nav a {
+    font-size: 16px;
+    margin: 5px 0;
+    padding: 10px 15px;
+  }
+
+  section {
+    padding: 20px;
+    margin: 100px 15px 20px 15px;
+  }
+
+  section h1 {
+    font-size: 2.2em;
+  }
+
+  section h2 {
+    font-size: 1.3em;
+  }
+
+  section h3 {
+    font-size: 1.5em;
+  }
+
+  section p,
+  section ul li {
+    font-size: 1em;
+  }
+
+  blockquote {
+    font-size: 1em;
+    padding: 15px;
+  }
+}

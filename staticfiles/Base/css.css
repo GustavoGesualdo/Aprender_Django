@@ -1,0 +1,389 @@
+/*
+ * Base Única de Estilos CSS
+ *
+ * Este arquivo contém os estilos base comuns a todos os seus projetos,
+ * gerados a partir da análise de 7 arquivos CSS fornecidos.
+ * Você pode importar este arquivo em outros arquivos CSS para manter
+ * a consistência e adicionar estilos mais específicos conforme necessário.
+ */
+
+/* Normalização */
+html {
+    box-sizing: border-box;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+  
+  /* Estilos Globais do Corpo */
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fc; /* Cor de fundo consistente */
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column; /* Para o footer ficar embaixo em algumas páginas */
+    min-height: 100vh; /* Garante que o body ocupe a altura total */
+  }
+  
+  /* Menu de Navegação Fixo no Topo */
+  nav {
+    background-color: #5c6bc0; /* Tom de azul consistente */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  nav div {
+    display: flex;
+    align-items: center;
+  }
+  
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin: 0 15px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  nav a:hover {
+    background-color: #3f51b5; /* Tom mais escuro de azul no hover */
+    transform: translateY(-2px);
+  }
+  
+  /* Containers Gerais */
+  .container,
+  section,
+  .login-container {
+    max-width: 960px; /* Largura máxima comum */
+    margin: 120px auto 20px auto; /* Margem superior padrão para conteúdo abaixo do menu */
+    padding: 30px;
+  }
+  
+  .login-container {
+    flex: 1; /* Para centralizar o conteúdo verticalmente */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 100px); /* Altura mínima para centralizar na tela de login/reset */
+  }
+  
+  /* Estilos Comuns para Caixas (Login, Conteúdo, etc.) */
+  .login-box,
+  section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-box {
+    width: 400px;
+    max-width: 100%;
+    padding: 30px;
+  }
+  
+  section {
+    /* As margens e paddings já estão definidos no .container */
+  }
+  
+  /* Títulos */
+  h1,
+  h2 {
+    color: #3f51b5; /* Tom de azul consistente para títulos */
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    font-size: 2.8em; /* Tamanho maior para h1 */
+  }
+  
+  h2 {
+    font-size: 2.2em; /* Tamanho padrão para h2 */
+  }
+  
+  /* Formulários */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .form-row > div {
+    flex: 1;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  /* Labels */
+  label {
+    display: block;
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  /* Inputs de Texto e Senha */
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"] {
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: calc(100% - 24px);
+    margin-top: 5px;
+  }
+  
+  /* Botões de Submit */
+  button[type="submit"],
+  input[type="submit"] {
+    background-color: #008CBA; /* Azul padrão para botões de ação */
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+  }
+  
+  button[type="submit"]:hover,
+  input[type="submit"]:hover {
+    background-color: #0077b3;
+    opacity: 0.9;
+  }
+  
+  /* Botões com Cores Específicas */
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .button-group button {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .button-group button:hover {
+    opacity: 0.9;
+  }
+  
+  .button-group button[value="criar"] {
+    background-color: #4CAF50; /* Verde para criar */
+  }
+  
+  .button-group button[value="deletar"] {
+    background-color: #f44336; /* Vermelho para deletar */
+  }
+  
+  .button-group button[value="pesquisar"] {
+    background-color: #008CBA; /* Azul para pesquisar (reforçando a cor padrão) */
+  }
+  
+  /* Links */
+  a {
+    color: #3f51b5; /* Tom de azul padrão para links */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  .login-box .links,
+  .links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+  }
+  
+  /* Mensagens */
+  .messages,
+  .login-box .messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 0.9em;
+  }
+  
+  .login-box .messages.success {
+    color: green;
+  }
+  
+  .errorlist,
+  .login-box .errorlist {
+    color: red;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
+  }
+  
+  .errorlist li,
+  .login-box .errorlist li {
+    font-size: 0.9em;
+  }
+  
+  /* Tabelas */
+  .resultados-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .resultados-tabela th,
+  .resultados-tabela td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .resultados-tabela th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .resultados-tabela tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .resultados-tabela tbody tr:hover {
+    background-color: #e0f7fa;
+  }
+  
+  /* Rodapé */
+  footer {
+    text-align: center;
+    padding: 20px 30px;
+    font-size: 0.9em;
+    color: #777;
+    border-top: 1px solid #eee;
+    margin-top: 30px;
+  }
+  
+  footer a {
+    color: #3f51b5;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .container,
+    section {
+      margin-top: 100px;
+      padding: 20px;
+    }
+  
+    .form-row {
+      flex-direction: column;
+    }
+  
+    .form-row > div {
+      width: 100%;
+    }
+  
+    .button-group {
+      flex-direction: column;
+    }
+  
+    .button-group button {
+      width: 100%;
+      margin-top: 5px;
+    }
+  
+    nav a {
+      font-size: 16px;
+      margin: 0 10px;
+      padding: 8px 15px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    h1,
+    h2 {
+      font-size: 1.8em;
+    }
+  
+    label,
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    button[type="submit"],
+    input[type="submit"],
+    .button-group button,
+    .login-box label,
+    .login-box input[type="text"],
+    .login-box input[type="password"],
+    .login-box input[type="submit"],
+    .login-box .links,
+    .messages,
+    .errorlist li,
+    .login-box .messages,
+    .login-box .errorlist li {
+      font-size: 0.9em;
+    }
+  
+    .container,
+    section {
+      margin-top: 90px;
+      padding: 15px;
+    }
+  
+    .login-box {
+      padding: 20px;
+      width: 90%;
+    }
+  
+    nav {
+      padding: 10px 15px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    nav div {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    nav a {
+      margin: 5px 0;
+      padding: 8px 12px;
+      display: block;
+      border-radius: 0;
+    }
+  }
